@@ -1,3 +1,6 @@
 [submodule "components/summarizer/pointer-generator"]
 	path = components/summarizer/pointer-generator
 	url = git@github.com:arpol/pointer-generator.git
+[submodule "components/summarizer/cnn-dailymail"]
+	path = components/summarizer/cnn-dailymail
+	url = https://github.com/becxer/cnn-dailymail.git
