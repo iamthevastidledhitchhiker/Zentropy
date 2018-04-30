@@ -1,0 +1,3 @@
+[submodule "components/summarizer/pointer-generator"]
+	path = components/summarizer/pointer-generator
+	url = git@github.com:arpol/pointer-generator.git
