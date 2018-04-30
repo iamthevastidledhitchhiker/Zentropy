@@ -8,3 +8,9 @@ Thumbs.db
 # IDE
 *.idea
 *.iml
+.ipynb_checkpoints
+__pycache__
+experiments
+pickles
+raw_articles
+*.swp
