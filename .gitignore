@@ -14,3 +14,4 @@ experiments
 pickles
 raw_articles
 *.swp
+*.pyc
