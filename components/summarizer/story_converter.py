@@ -7,7 +7,7 @@ dm_single_close_quote = u'\u2019'  # unicode
 dm_double_close_quote = u'\u201d'
 END_TOKENS = ['.', '!', '?', '...', "'", "`", '"', dm_single_close_quote, dm_double_close_quote,
               ")"]  # acceptable ways to end a sentence
-finished_files_dir = "finished_files"
+finished_files_dir = "raw_articles"
 chunks_dir = os.path.join(finished_files_dir, "chunked")
 
 CHUNK_SIZE = 1000  # num examples per chunk, for the chunked data
