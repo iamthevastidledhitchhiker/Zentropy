@@ -2,8 +2,12 @@ from nltk import word_tokenize
 from newspaper import Article
 import pickle
 import os.path
-
-RAW_STORIES_PICKLE_FILE = 'pickles/raw_stories.pickle'
+import sys
+sys.path.append("./pointer-generator")
+import run_summarization as ra
+from nltk.tokenize import sent_tokenize
+import hashlib
+import re
 
 def try_fix_upper_case_for_summaries(stories, summaries):
     """ Look for matching words in the source article and make sure summary tokens share the
@@ -35,32 +39,106 @@ def try_fix_upper_case_for_summaries(stories, summaries):
 
     return upper_case_summaries
 
-def extract_stories_and_ext_summaries(urls):
+
+def hasher(w):
+    return hashlib.md5(w.encode()).hexdigest()[:9]
+
+
+def extract_stories_and_ext_summaries(urls, force_download=False):
     stories = []
     summaries_extractive = []
+    summaries_3sent = []
+
+    path = 'stories/'
+
     for url in urls:
-        article = Article(url)
-        article.download()
-        article.parse()
-        stories.append(article.text)
-        article.nlp()
-        summaries_extractive.append(article.summary)
+        # Calculate a hash for the URL:
+        h = hasher(url)
 
-    return stories, summaries_extractive
+        # Set file paths for each cached entry:
+        story_file = path + h+".story"
+        summ_ext_file = path + h + ".summary_extractive"
+        summ_3sent_file = path + h + ".summary_3sent"
+
+        # if story exists in a file - load it from file
+        if not force_download and os.path.isfile(story_file):
+            with open(story_file, 'r') as file:
+                article_text = file.read().replace('\n', '')
+                stories.append(article_text)
+            with open(summ_ext_file, 'r') as file:
+                summ_ext_text = file.read().replace('\n', '')
+                summaries_extractive.append(summ_ext_text)
+            with open(summ_3sent_file, 'r') as file:
+                summ_3sent_text = file.read().replace('\n', '')
+                summaries_3sent.append(summ_3sent_text)
+                print(summ_3sent_text)
+        # else load it using newspaper API and store in on disk as well
+        else:
+            article = Article(url)
+            article.download()
+
+            # Get full article:
+            article.parse()
+
+            article.nlp()
+
+            # Split article into sentences and
+            # add periods where multiple new lines can occur:
+            sent_tokens = sent_tokenize(re.sub(r"([a-z])\n\n([A-Z])", r"\1.\n\n\2", article.text))
+
+            # Some articles begin with image caption sentence or video playback info.
+            # In such case we want to remove it:
+            if re.match(r"^Image(:|\s).*", sent_tokens[0]):
+                sent_tokens.pop(0)
+            if re.match(r"^Media playback(:|\s).*", sent_tokens[0]):
+                sent_tokens.pop(0)
+
+            article_text = ' '.join(sent_tokens)
+            summ_3sent_text = ' '.join(sent_tokens[:3])
+
+            stories.append(article_text)
+            summaries_extractive.append(article.summary)
+            summaries_3sent.append(summ_3sent_text)
+
+            with open(story_file, "w") as file:
+                file.write(article.text)
+
+            with open(summ_ext_file, "w") as file:
+                file.write(article.summary)
+
+            with open(summ_3sent_file, "w") as file:
+                file.write(summ_3sent_text)
+
+    return stories, summaries_extractive, summaries_3sent
 
 
-def fetch_stories(urls):
+def fetch_and_pickle_stories(urls, force_download=False):
+    RAW_STORIES_PICKLE_FILE = 'pickles/raw_stories.pickle'
 
-    if os.path.isfile(RAW_STORIES_PICKLE_FILE):
-        print("Raw story pickle file already exists, will load the existing data!")
-        story_data = pickle.load(open(RAW_STORIES_PICKLE_FILE, "rb"))
-
-    else:
-        stories, summaries_extractive = extract_stories_and_ext_summaries(urls)
-        story_data = {
-            'stories': stories,
-            'urls': urls,
-            'summaries_extractive': summaries_extractive
-        }
-        pickle.dump(story_data, open(RAW_STORIES_PICKLE_FILE, "wb"))
+    stories, summaries_extractive, summaries_3sent = extract_stories_and_ext_summaries(urls, force_download)
+    story_data = {
+        'urls': urls,
+        'stories': stories,
+        'summaries_extractive': summaries_extractive,
+        'summaries_3sent': summaries_3sent
+    }
+    pickle.dump(story_data, open(RAW_STORIES_PICKLE_FILE, "wb"))
     return story_data
+
+
+def run_summarization_model_decoder(pickle_file):
+    argv = ["entry_point",
+            "--mode=decode",
+            "--api_mode=1",
+            "--pickle_file=" + pickle_file,
+            "--single_pass=1",
+            "--data_path=raw_articles/chunked/test_*",
+            "--vocab_path=cnn-dailymail/finished_files/vocab",
+            "--log_root=experiments",
+            "--exp_name=coverage_trained"]
+
+    try:
+        print("Starting TensorFlow Decoder...")
+        ra.run_external(argv)
+    except SystemExit:
+        print("Summarization model exited as expected :)")

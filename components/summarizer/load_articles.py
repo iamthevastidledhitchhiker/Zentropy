@@ -2,11 +2,8 @@
 # pip3 install newspaper3k
 
 # Fetch 30 articles:
-import sys
 import summarizer_utils as sutils
 import story_converter as sconv
-sys.path.append("./pointer-generator")
-import run_summarization as ra
 import pickle
 
 urls = [
@@ -26,7 +23,7 @@ urls = [
     "http://www.dailyfinland.fi/business/5162/UPM-gains-first-RSB-low-ILUC-risk-certification",
     "http://www.dailyfinland.fi/business/5150/Finnish-economy-to-stagnate-after-two-years-Nordea",
     "http://www.dailyfinland.fi/business/5204/Nokia-reports-decline-in-profits-pledges-to-improve",
-    "http://www.dailyfinland.fi/business/5074/Int%C2%B4l-media-giants-threat-to-local-players-Yle-CEO",
+    "https://www.theguardian.com/technology/2018/may/01/apple-second-quarterly-report-best-ever-iphone-x",
     "http://www.dailyfinland.fi/business/5014/New-Volkswagen-CEO-vows-to-speed-up-corporate-reforms",
     "http://www.dailyfinland.fi/business/5006/airBaltic-posts-best-ever-operational-results-in-2017",
     "http://www.dailyfinland.fi/business/4999/IAG-buys-4.6-stake-in-Norwegian-airlines",
@@ -48,22 +45,7 @@ print("Downloading articles DONE")
 
 summarizer_internal_pickle = "pickles/decoded_stories.pickle"
 sconv.process_and_save_to_disk(story_data['stories'], "test.bin")
-
-argv = ["entry_point",
-        "--mode=decode",
-        "--api_mode=1",
-        "--pickle_file="+summarizer_internal_pickle,
-        "--single_pass=1",
-        "--data_path=raw_articles/chunked/test_*",
-        "--vocab_path=cnn-dailymail/finished_files/vocab",
-        "--log_root=experiments",
-        "--exp_name=coverage_trained"]
-
-try:
-    print("Starting TensorFlow Decoder...")
-    #ra.run_external(argv)
-except SystemExit:
-    print("Summarization model exited as expected :)")
+sutils.run_summarization_model_decoder(summarizer_internal_pickle)
 
 summarization_output = pickle.load(open(summarizer_internal_pickle, "rb" ))
 print(summarization_output['summaries'])
