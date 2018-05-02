@@ -4,3 +4,6 @@
 [submodule "components/summarizer/cnn-dailymail"]
 	path = components/summarizer/cnn-dailymail
 	url = https://github.com/becxer/cnn-dailymail.git
+[submodule "components/ner/tagger-master"]
+	path = components/ner/tagger-master
+	url = https://github.com/glample/tagger.git
