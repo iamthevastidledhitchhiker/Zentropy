@@ -45,6 +45,7 @@ def hasher(w):
 
 
 def extract_stories_and_ext_summaries(urls, force_download=False):
+    titles = []
     stories = []
     summaries_extractive = []
     summaries_3sent = []
@@ -56,12 +57,16 @@ def extract_stories_and_ext_summaries(urls, force_download=False):
         h = hasher(url)
 
         # Set file paths for each cached entry:
+        title_file = path + h+".title"
         story_file = path + h+".story"
         summ_ext_file = path + h + ".summary_extractive"
         summ_3sent_file = path + h + ".summary_3sent"
 
         # if story exists in a file - load it from file
         if not force_download and os.path.isfile(story_file):
+            with open(title_file, 'r') as file:
+                article_title = file.read().replace('\n', '')
+                titles.append(article_title)
             with open(story_file, 'r') as file:
                 article_text = file.read().replace('\n', '')
                 stories.append(article_text)
@@ -71,7 +76,6 @@ def extract_stories_and_ext_summaries(urls, force_download=False):
             with open(summ_3sent_file, 'r') as file:
                 summ_3sent_text = file.read().replace('\n', '')
                 summaries_3sent.append(summ_3sent_text)
-                print(summ_3sent_text)
         # else load it using newspaper API and store in on disk as well
         else:
             article = Article(url)
@@ -82,23 +86,31 @@ def extract_stories_and_ext_summaries(urls, force_download=False):
 
             article.nlp()
 
+            # Do some processing:
+            article_text = re.sub(r"([a-z])\n\n([A-Z])", r"\1.\n\n\2", article.text)
+
             # Split article into sentences and
-            # add periods where multiple new lines can occur:
-            sent_tokens = sent_tokenize(re.sub(r"([a-z])\n\n([A-Z])", r"\1.\n\n\2", article.text))
+            sent_tokens = sent_tokenize(article_text)
 
             # Some articles begin with image caption sentence or video playback info.
             # In such case we want to remove it:
-            if re.match(r"^Image(:|\s).*", sent_tokens[0]):
-                sent_tokens.pop(0)
-            if re.match(r"^Media playback(:|\s).*", sent_tokens[0]):
-                sent_tokens.pop(0)
+
+            for idx, t in enumerate(sent_tokens):
+                if re.match(r"^Image(:|\s).*", t):
+                    sent_tokens.pop(idx)
+                if re.match(r"^Media playback(:|\s).*", t):
+                    sent_tokens.pop(idx)
 
             article_text = ' '.join(sent_tokens)
             summ_3sent_text = ' '.join(sent_tokens[:3])
 
+            titles.append(article.title)
             stories.append(article_text)
             summaries_extractive.append(article.summary)
             summaries_3sent.append(summ_3sent_text)
+
+            with open(title_file, "w") as file:
+                file.write(article.title)
 
             with open(story_file, "w") as file:
                 file.write(article.text)
@@ -109,15 +121,16 @@ def extract_stories_and_ext_summaries(urls, force_download=False):
             with open(summ_3sent_file, "w") as file:
                 file.write(summ_3sent_text)
 
-    return stories, summaries_extractive, summaries_3sent
+    return titles, stories, summaries_extractive, summaries_3sent
 
 
 def fetch_and_pickle_stories(urls, force_download=False):
     RAW_STORIES_PICKLE_FILE = 'pickles/raw_stories.pickle'
 
-    stories, summaries_extractive, summaries_3sent = extract_stories_and_ext_summaries(urls, force_download)
+    titles, stories, summaries_extractive, summaries_3sent = extract_stories_and_ext_summaries(urls, force_download)
     story_data = {
         'urls': urls,
+        'titles': titles,
         'stories': stories,
         'summaries_extractive': summaries_extractive,
         'summaries_3sent': summaries_3sent
@@ -126,7 +139,7 @@ def fetch_and_pickle_stories(urls, force_download=False):
     return story_data
 
 
-def run_summarization_model_decoder(pickle_file):
+def run_summarization_model_decoder(pickle_file, exp_name):
     argv = ["entry_point",
             "--mode=decode",
             "--api_mode=1",
@@ -135,7 +148,7 @@ def run_summarization_model_decoder(pickle_file):
             "--data_path=raw_articles/chunked/test_*",
             "--vocab_path=cnn-dailymail/finished_files/vocab",
             "--log_root=experiments",
-            "--exp_name=coverage_trained"]
+            "--exp_name="+exp_name]
 
     try:
         print("Starting TensorFlow Decoder...")
