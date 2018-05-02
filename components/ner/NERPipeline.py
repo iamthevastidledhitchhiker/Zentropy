@@ -11,7 +11,8 @@ def read_pickle_one_by_one(pickle_file):
                     break
 
 def sentenceSplitter(article):
-    if article[-1] != '.': article.append('.')
+    #Turn string into list of lists of sentences
+    if article[-1] != '.': article.append('.') #always make sure article ends with full stop
     sentences = []
     sentence = []
     for word in article:
@@ -22,10 +23,12 @@ def sentenceSplitter(article):
     return(sentences)
 
 def writeArticle(splitArticle,openFile):
+    #write each sentence to new line of open file
     for sentence in splitArticle:
         openFile.write(' '.join(sentence) + '\n')
 
 def findNamedEntities(namedArticle):
+    #split article words with respective entity
     names = []
     namedArticle[-1] = ''
     for word in namedArticle:
@@ -34,6 +37,7 @@ def findNamedEntities(namedArticle):
         except Exception as e:
             print('EOF')
 
+    #extract organisations
     organisations = []
     insideORG = False
     for name in names:
@@ -51,10 +55,11 @@ def findNamedEntities(namedArticle):
 
 inputData   = [i for i in read_pickle_one_by_one("Data/summarizer_output.pickle")][0]
 
-urls = inputData['urls']
-stories = inputData['stories']
-summariesExtractive = inputData['summaries_extractive']
-summaries = inputData['summaries_model']
+urls = inputData['urls'] #urls
+stories = inputData['stories'] #full articles (untokenized)
+summariesExtractive = inputData['summaries_extractive'] #extractive summaries (tokenized)
+summaries = inputData['summaries_model'] #default summaries (tokenized)
+summaries3Sent = inputData['summaries_3sent'] #first 3 sentences of full story (untokenized)
 
 assert len(urls) == len(stories) == len(summariesExtractive) == len(summaries)
 
