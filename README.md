@@ -24,8 +24,8 @@ Extracts polarity of organisations from tagger model.
 
 To install the requiements:
 *insert pip install instructions*
-`pip install tensorflow`
-`pip2.7 install nltk`
+`pip install tensorflow`;
+`pip2.7 install nltk`;
 `pip2.7 install theano`
 
 ## Usage
