@@ -36,3 +36,5 @@ with open(r'output.txt','r') as namedStory:
 print('NAMED ENTITIES:')
 orgs  = neru.findNamedEntities(namedStory.split(' '))
 print(orgs)
+
+neru.writeOutput(orgs,stories)
