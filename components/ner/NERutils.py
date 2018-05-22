@@ -1,6 +1,17 @@
+import nltk.tokenize as tokenize
+import pickle
+import os
+
+def read_pickle_one_by_one(pickle_file):
+    with open(pickle_file, "rb") as t_in:
+            while True:
+                try:
+                    yield pickle.load(t_in)
+                except EOFError:
+                    break
+
 def sentenceSplitter(article):
-    #Turn string into list of lists of sentences
-    if article[-1] != '.': article.append('.') #always make sure article ends with full stop
+    if article[-1] != '.': article.append('.')
     sentences = []
     sentence = []
     for word in article:
@@ -10,13 +21,7 @@ def sentenceSplitter(article):
             sentence = []
     return(sentences)
 
-def writeArticle(splitArticle,openFile):
-    #write each sentence to new line of open file
-    for sentence in splitArticle:
-        openFile.write(' '.join(sentence) + '\n')
-
 def findNamedEntities(namedArticle):
-    #split article words with respective entity
     names = []
     namedArticle[-1] = ''
     for word in namedArticle:
@@ -25,17 +30,26 @@ def findNamedEntities(namedArticle):
         except Exception as e:
             print('EOF')
 
-    #extract organisations
     organisations = []
+    articleOrgs = []
     insideORG = False
     for name in names:
         if len(name) > 1 and name[1] == 'B-ORG':
-            organisations.append(name[0])
+            articleOrgs.append(name[0])
             insideORG = True
-        elif insideORG:
+        elif insideORG and name[0] != '!!!':
                 if len(name) >1 and name[1] == 'I-ORG':
-                    organisations[-1] += ' ' + name[0]
+                    articleOrgs[-1] += ' ' + name[0]
+        elif name[0] == '!!!':
+            organisations.append(list(set(articleOrgs)))
+            articleOrgs = []
+            insideORG = False
         else:
             insideORG = False
 
-    return list(set(organisations))
+    return organisations
+
+def writeArticle(splitArticle,openFile):
+    for sentence in splitArticle:
+        openFile.write(' '.join(sentence) + '\n')
+    openFile.write('!!!' + '\n') #EOF
