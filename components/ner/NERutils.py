@@ -53,3 +53,21 @@ def writeArticle(splitArticle,openFile):
     for sentence in splitArticle:
         openFile.write(' '.join(sentence) + '\n')
     openFile.write('!!!' + '\n') #EOF
+
+def writeOutput(organisations,articles):
+    aspectFile = open(r'aspects.txt','w')
+
+    for i in range(len(organisations)):
+
+        currentOrgs = organisations[i]
+        currentArt = articles[i].replace('\n','.').split(".")
+
+        for org in currentOrgs:
+            for sent in currentArt:
+                for word in sent.split(" "):
+                    if word == org:
+                        print('Yayyyyyy!!!')
+                        aspectFile.write(sent.replace(word,'aspect_term')+'\n')
+                        aspectFile.write(org+'\n')
+                        aspectFile.write('N/A'+'\n')
+    aspectFile.close()
