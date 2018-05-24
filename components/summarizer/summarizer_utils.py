@@ -159,3 +159,32 @@ def run_summarization_model_decoder(pickle_file, data_path, vocab_path, log_root
         ra.run_external(argv)
     except SystemExit:
         print("Summarization model exited as expected :)")
+
+
+def get_3_sentence_summaries(articles):
+    summaries = []
+    for article in articles:
+        sent_tokens = sent_tokenize(article)
+        summaries.append(' '.join(sent_tokens[:3]))
+    return summaries
+
+# Test data cleaning functionality:
+def remove_date_title_and_id(s):
+    _s = s.split('\n')
+    return ''.join(_s[3:])
+
+
+#replace period followed by a capital with a period space capital
+def fix_periods(s):
+    fixed = re.sub('\.([A-Z])', '. \g<1>', s)
+    return fixed
+
+def load_test_data(csv_file):
+    article_df = pd.read_csv(csv_file)
+    
+    articles = article_df['full_text'].apply(remove_date_title_and_id)
+    articles = articles.apply(fix_periods)
+    
+    ids = article_df['docno_x']
+    
+    return articles, ids
