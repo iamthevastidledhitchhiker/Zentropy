@@ -125,6 +125,7 @@ def extract_stories_and_ext_summaries(urls, force_download=False):
 
 
 def fetch_and_pickle_stories(urls, force_download=False):
+    """Fetches news stories from URLs provided as an array"""
     RAW_STORIES_PICKLE_FILE = 'pickles/raw_stories.pickle'
 
     titles, stories, summaries_extractive, summaries_3sent = extract_stories_and_ext_summaries(urls, force_download)
@@ -138,17 +139,20 @@ def fetch_and_pickle_stories(urls, force_download=False):
     pickle.dump(story_data, open(RAW_STORIES_PICKLE_FILE, "wb"))
     return story_data
 
+def load_stories_from_csv():
+    pass
 
-def run_summarization_model_decoder(pickle_file, exp_name):
+
+def run_summarization_model_decoder(pickle_file, data_path, vocab_path, log_root, exp_name):
     argv = ["entry_point",
             "--mode=decode",
             "--api_mode=1",
             "--pickle_file=" + pickle_file,
             "--single_pass=1",
-            "--data_path=raw_articles/chunked/test_*",
-            "--vocab_path=cnn-dailymail/finished_files/vocab",
-            "--log_root=experiments",
-            "--exp_name="+exp_name]
+            "--data_path=" + data_path,
+            "--vocab_path=" + vocab_path,
+            "--log_root=" + log_root,
+            "--exp_name=" + exp_name]
 
     try:
         print("Starting TensorFlow Decoder...")

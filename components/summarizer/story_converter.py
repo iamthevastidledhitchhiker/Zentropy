@@ -1,21 +1,22 @@
 import os
 import struct
 import subprocess
+import pexpect
 from tensorflow.core.example import example_pb2
 
 dm_single_close_quote = u'\u2019'  # unicode
 dm_double_close_quote = u'\u201d'
 END_TOKENS = ['.', '!', '?', '...', "'", "`", '"', dm_single_close_quote, dm_double_close_quote,
               ")"]  # acceptable ways to end a sentence
-finished_files_dir = "raw_articles"
+finished_files_dir = "../../data/converted_articles"
 chunks_dir = os.path.join(finished_files_dir, "chunked")
 
 CHUNK_SIZE = 1000  # num examples per chunk, for the chunked data
 
 
 # Takes article as an input and stores it as a file readable by the framework
-def process_and_save_to_disk(stories, out_file):
-    stories = tokenize_stories(stories)
+def process_and_save_to_disk(stories, out_file, verbose = False):
+    stories = tokenize_stories(stories, verbose)
     stories = format_stories(stories)
     tf_example_strs = stories2examples(stories)
     save2bin(tf_example_strs, out_file)
@@ -24,13 +25,15 @@ def process_and_save_to_disk(stories, out_file):
 
 # Story is a string
 # return story as a string or story written to file?
-def tokenize_stories(stories):
+def tokenize_stories(stories, verbose = False):
     command = ['java', 'edu.stanford.nlp.process.PTBTokenizer', '-preserveLines']
     stories_tokenized = []
-    for story in stories:
+    for n, story in enumerate(stories):
         (out, err) = subprocess.Popen(command, stdout=subprocess.PIPE, stdin=subprocess.PIPE).communicate(
             story.encode('utf-8'))
         stories_tokenized.append(out.decode())
+        if verbose and not (n % 25):
+            print(f"Processing story number: {n+1}")
     return stories_tokenized
 
 
