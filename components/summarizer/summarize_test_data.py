@@ -33,7 +33,7 @@ for M in models:
 
 	# Fix missing data in the original test set:
 	n = 1991
- 	detokenized_summaries.insert(n, '')
+	detokenized_summaries.insert(n, '')
 
 	summaries[M] = detokenized_summaries
 
