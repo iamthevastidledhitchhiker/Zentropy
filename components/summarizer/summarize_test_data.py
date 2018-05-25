@@ -5,7 +5,7 @@ from nltk.tokenize.moses import MosesDetokenizer
 
 DATA_PATH = '../../data/'
 
-models = ['no_coverage', 'some_coverage', 'more_coverage']
+models = ['no_coverage', 'more_coverage']
 
 articles, ids = sutils.load_test_data(DATA_PATH + 'test_data.csv')
 
@@ -21,7 +21,7 @@ for M in models:
 
 	# Load generated summaries:
 	summarization_output = pickle.load(open(summarizer_internal_pickle, "rb" ))
-	tokenized_summaries = sutils.try_fix_upper_case_for_summaries(articles[:10], summarization_output['summaries_tokens'])
+	tokenized_summaries = sutils.try_fix_upper_case_for_summaries(articles, summarization_output['summaries_tokens'])
 
 	detokenizer = MosesDetokenizer()
 
@@ -30,6 +30,10 @@ for M in models:
 	for s in tokenized_summaries:
 	    s_detok = detokenizer.detokenize(s, return_str=True)
 	    detokenized_summaries.append(s_detok)
+
+	# Fix missing data in the original test set:
+	n = 1991
+ 	detokenized_summaries.insert(n, '')
 
 	summaries[M] = detokenized_summaries
 
@@ -42,7 +46,6 @@ summarizer_output = {
     'ids' : ids,
     'stories': articles,
     'summaries_no_coverage': summaries['no_coverage'],
-    'summaries_some_coverage': summaries['some_coverage'],
     'summaries_more_coverage': summaries['more_coverage'],
     'summaries_3sent': summaries_3sent
 }
