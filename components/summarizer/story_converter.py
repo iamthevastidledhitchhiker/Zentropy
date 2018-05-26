@@ -1,3 +1,4 @@
+# Contains code from https://github.com/abisee/cnn-dailymail Copyright 2017 Abigail See
 import os
 import struct
 import subprocess
@@ -7,30 +8,30 @@ dm_single_close_quote = u'\u2019'  # unicode
 dm_double_close_quote = u'\u201d'
 END_TOKENS = ['.', '!', '?', '...', "'", "`", '"', dm_single_close_quote, dm_double_close_quote,
               ")"]  # acceptable ways to end a sentence
-finished_files_dir = "raw_articles"
-chunks_dir = os.path.join(finished_files_dir, "chunked")
 
 CHUNK_SIZE = 1000  # num examples per chunk, for the chunked data
 
 
 # Takes article as an input and stores it as a file readable by the framework
-def process_and_save_to_disk(stories, out_file):
-    stories = tokenize_stories(stories)
+def process_and_save_to_disk(stories, out_file, finished_files_dir, verbose = False):
+    stories = tokenize_stories(stories, verbose)
     stories = format_stories(stories)
     tf_example_strs = stories2examples(stories)
-    save2bin(tf_example_strs, out_file)
-    chunk_file(out_file)
+    save2bin(tf_example_strs, out_file, finished_files_dir)
+    chunk_file(out_file, finished_files_dir)
 
 
 # Story is a string
 # return story as a string or story written to file?
-def tokenize_stories(stories):
+def tokenize_stories(stories, verbose = False):
     command = ['java', 'edu.stanford.nlp.process.PTBTokenizer', '-preserveLines']
     stories_tokenized = []
-    for story in stories:
+    for n, story in enumerate(stories):
         (out, err) = subprocess.Popen(command, stdout=subprocess.PIPE, stdin=subprocess.PIPE).communicate(
             story.encode('utf-8'))
         stories_tokenized.append(out.decode())
+        if verbose and not (n % 25):
+            print(f"Processing story number: {n+1}")
     return stories_tokenized
 
 
@@ -46,7 +47,7 @@ def stories2examples(stories):
     return tf_example_strs
 
 
-def save2bin(tf_example_strs, out_file):
+def save2bin(tf_example_strs, out_file, finished_files_dir):
     if not os.path.exists(finished_files_dir): os.makedirs(finished_files_dir)
     out_file = os.path.join(finished_files_dir, out_file)
     with open(out_file, 'wb') as writer:
@@ -87,8 +88,9 @@ def fix_missing_period(line):
 
 
 # Chunks the data file with *bin extension into chunks
-def chunk_file(file_name):
+def chunk_file(file_name, finished_files_dir):
     # Make a dir to hold the chunks
+    chunks_dir = os.path.join(finished_files_dir, "chunked")
     if not os.path.isdir(chunks_dir):
         os.mkdir(chunks_dir)
     in_file = '%s/%s' % (finished_files_dir, file_name)

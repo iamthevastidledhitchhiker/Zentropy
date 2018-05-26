@@ -2,12 +2,12 @@ from nltk import word_tokenize
 from newspaper import Article
 import pickle
 import os.path
-import sys
-sys.path.append("./pointer-generator")
+import os
 import run_summarization as ra
 from nltk.tokenize import sent_tokenize
 import hashlib
 import re
+import pandas as pd
 
 def try_fix_upper_case_for_summaries(stories, summaries):
     """ Look for matching words in the source article and make sure summary tokens share the
@@ -24,6 +24,7 @@ def try_fix_upper_case_for_summaries(stories, summaries):
     for s in zip(stories, summaries):
         story = s[0]
         summary = s[1]
+                  
         story_tokenized = word_tokenize(story)
 
         for i, token in enumerate(summary):
@@ -44,14 +45,12 @@ def hasher(w):
     return hashlib.md5(w.encode()).hexdigest()[:9]
 
 
-def extract_stories_and_ext_summaries(urls, force_download=False):
+def extract_stories_and_ext_summaries(urls, path, force_download=False):
     titles = []
     stories = []
     summaries_extractive = []
     summaries_3sent = []
-
-    path = 'stories/'
-
+    os.makedirs(os.path.dirname(path), exist_ok=True)
     for url in urls:
         # Calculate a hash for the URL:
         h = hasher(url)
@@ -124,10 +123,10 @@ def extract_stories_and_ext_summaries(urls, force_download=False):
     return titles, stories, summaries_extractive, summaries_3sent
 
 
-def fetch_and_pickle_stories(urls, force_download=False):
-    RAW_STORIES_PICKLE_FILE = 'pickles/raw_stories.pickle'
+def fetch_and_pickle_stories(urls, stories_pickle, stories_cache_path, force_download=False):
+    """Fetches news stories from URLs provided as an array"""
 
-    titles, stories, summaries_extractive, summaries_3sent = extract_stories_and_ext_summaries(urls, force_download)
+    titles, stories, summaries_extractive, summaries_3sent = extract_stories_and_ext_summaries(urls, stories_cache_path, force_download)
     story_data = {
         'urls': urls,
         'titles': titles,
@@ -135,23 +134,55 @@ def fetch_and_pickle_stories(urls, force_download=False):
         'summaries_extractive': summaries_extractive,
         'summaries_3sent': summaries_3sent
     }
-    pickle.dump(story_data, open(RAW_STORIES_PICKLE_FILE, "wb"))
+    pickle.dump(story_data, open(stories_pickle, "wb"))
     return story_data
 
+def load_stories_from_csv():
+    pass
 
-def run_summarization_model_decoder(pickle_file, exp_name):
+
+def run_summarization_model_decoder(pickle_file, data_path, vocab_path, log_root, exp_name):
     argv = ["entry_point",
             "--mode=decode",
             "--api_mode=1",
             "--pickle_file=" + pickle_file,
             "--single_pass=1",
-            "--data_path=raw_articles/chunked/test_*",
-            "--vocab_path=cnn-dailymail/finished_files/vocab",
-            "--log_root=experiments",
-            "--exp_name="+exp_name]
+            "--data_path=" + data_path,
+            "--vocab_path=" + vocab_path,
+            "--log_root=" + log_root,
+            "--exp_name=" + exp_name]
 
     try:
         print("Starting TensorFlow Decoder...")
         ra.run_external(argv)
     except SystemExit:
         print("Summarization model exited as expected :)")
+
+
+def get_3_sentence_summaries(articles):
+    summaries = []
+    for article in articles:
+        sent_tokens = sent_tokenize(article)
+        summaries.append(' '.join(sent_tokens[:3]))
+    return summaries
+
+# Test data cleaning functionality:
+def remove_date_title_and_id(s):
+    _s = s.split('\n')
+    return ''.join(_s[3:])
+
+
+#replace period followed by a capital with a period space capital
+def fix_periods(s):
+    fixed = re.sub('\.([A-Z])', '. \g<1>', s)
+    return fixed
+
+def load_test_data(csv_file):
+    article_df = pd.read_csv(csv_file)
+    
+    articles = article_df['full_text'].apply(remove_date_title_and_id)
+    articles = articles.apply(fix_periods)
+    
+    ids = article_df['docno_x']
+    
+    return articles, ids
