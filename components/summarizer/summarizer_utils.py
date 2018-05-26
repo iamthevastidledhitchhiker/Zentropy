@@ -2,8 +2,7 @@ from nltk import word_tokenize
 from newspaper import Article
 import pickle
 import os.path
-import sys
-sys.path.append("./pointer-generator")
+import os
 import run_summarization as ra
 from nltk.tokenize import sent_tokenize
 import hashlib
@@ -25,6 +24,7 @@ def try_fix_upper_case_for_summaries(stories, summaries):
     for s in zip(stories, summaries):
         story = s[0]
         summary = s[1]
+                  
         story_tokenized = word_tokenize(story)
 
         for i, token in enumerate(summary):
@@ -45,14 +45,12 @@ def hasher(w):
     return hashlib.md5(w.encode()).hexdigest()[:9]
 
 
-def extract_stories_and_ext_summaries(urls, force_download=False):
+def extract_stories_and_ext_summaries(urls, path, force_download=False):
     titles = []
     stories = []
     summaries_extractive = []
     summaries_3sent = []
-
-    path = 'stories/'
-
+    os.makedirs(os.path.dirname(path), exist_ok=True)
     for url in urls:
         # Calculate a hash for the URL:
         h = hasher(url)
@@ -125,11 +123,10 @@ def extract_stories_and_ext_summaries(urls, force_download=False):
     return titles, stories, summaries_extractive, summaries_3sent
 
 
-def fetch_and_pickle_stories(urls, force_download=False):
+def fetch_and_pickle_stories(urls, stories_pickle, stories_cache_path, force_download=False):
     """Fetches news stories from URLs provided as an array"""
-    RAW_STORIES_PICKLE_FILE = 'pickles/raw_stories.pickle'
 
-    titles, stories, summaries_extractive, summaries_3sent = extract_stories_and_ext_summaries(urls, force_download)
+    titles, stories, summaries_extractive, summaries_3sent = extract_stories_and_ext_summaries(urls, stories_cache_path, force_download)
     story_data = {
         'urls': urls,
         'titles': titles,
@@ -137,7 +134,7 @@ def fetch_and_pickle_stories(urls, force_download=False):
         'summaries_extractive': summaries_extractive,
         'summaries_3sent': summaries_3sent
     }
-    pickle.dump(story_data, open(RAW_STORIES_PICKLE_FILE, "wb"))
+    pickle.dump(story_data, open(stories_pickle, "wb"))
     return story_data
 
 def load_stories_from_csv():

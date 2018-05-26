@@ -15,5 +15,5 @@ pickles
 raw_articles
 *.swp
 *.pyc
-input.txt
-output.txt
+components/ner/input.txt
+components/ner/output.txt
