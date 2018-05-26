@@ -15,3 +15,5 @@ pickles
 raw_articles
 *.swp
 *.pyc
+input.txt
+output.txt
