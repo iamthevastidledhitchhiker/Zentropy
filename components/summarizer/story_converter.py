@@ -1,3 +1,4 @@
+# Contains code from https://github.com/abisee/cnn-dailymail Copyright 2017 Abigail See
 import os
 import struct
 import subprocess
