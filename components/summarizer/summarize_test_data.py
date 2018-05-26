@@ -15,11 +15,11 @@ for M in models:
     summarizer_internal_pickle = DATA_PATH + "pickles/decoded_stories_" + M + ".pickle"
     
     # Generate summaries from chunked binary data in "converted_articles/chunked/test_*" 
-    #sutils.run_summarization_model_decoder(summarizer_internal_pickle, 
-     #      data_path = DATA_PATH + "converted_articles/chunked/test_*" ,
-     #      vocab_path = DATA_PATH + "summarizer_training_data/finished_files/vocab",
-     #      log_root = DATA_PATH + "summarizer_models",
-     #      exp_name = M)
+    sutils.run_summarization_model_decoder(summarizer_internal_pickle,
+          data_path = DATA_PATH + "converted_articles/chunked/test_*" ,
+          vocab_path = DATA_PATH + "summarizer_training_data/finished_files/vocab",
+          log_root = DATA_PATH + "summarizer_models",
+          exp_name = M)
 
     # Load generated summaries:
     summarization_output = pickle.load(open(summarizer_internal_pickle, "rb" ))
