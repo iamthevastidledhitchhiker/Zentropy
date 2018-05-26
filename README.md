@@ -49,14 +49,7 @@ To install and run Summarization + Named Entity Recognition you need to do the f
 
 Testing data of 4000 news articles was used to evaluate the Summarization + NER performance. The whole process takes more than 6 hours to complete on a GPU, and the team executed different steps separately, therefore a full-end-to-end test run on 4000 test articles does not exist in this repo. It can be created and provided if needed. The following files show the code that needed to be run in order to do this:
 
-* Summarization:
-* NER
-* F1 score generation
+* Summarization: TODO mention files and explanations
+* NER: TODO mention files and explanations
+* F1 score generation: TODO mention files and explanations
 
-
-For example: Model takes input from data folder in newline seperated form:
-```
-Article Headline?
-Article?
-```
-Then run `python Zentropy.py`.
