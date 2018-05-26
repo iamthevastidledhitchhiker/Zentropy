@@ -55,9 +55,9 @@ To install and run Summarization + Named Entity Recognition you need to do the f
 
 ### Evaluation on testing data
 
-Testing data of 4000 news articles was used to evaluate the Summarization + NER performance. The whole process takes more than 6 hours to complete on a GPU, and the team executed different steps separately, therefore a full-end-to-end test run on 4000 test articles does not exist in this repo. It can be created and provided if needed. The following files show the code that needed to be run in order to do this:
+Testing data of 3986 news articles was used to evaluate the Summarization + NER performance. The whole process takes more than 6 hours to complete on a GPU, and the team executed different steps separately, therefore a full-end-to-end test run on 3986 test articles does not exist in this repo. It can be created and provided if needed. The following files show the code that needed to be run in order to do this:
 
-* Summarization: TODO mention files and explanations
+* Summarization: File `components\summarizer\summarize_test_data.py` contains the code used to generate summaries for 3986 test articles. The output of the summarization is stored in a pickle file, which is then manually extracted into NER component of the pipeline.
 * NER: TODO mention files and explanations
 * F1 score generation: TODO mention files and explanations
 
