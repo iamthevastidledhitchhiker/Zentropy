@@ -57,13 +57,13 @@ To install and run Summarization + Named Entity Recognition you need to do the f
 
 Testing data of 3986 news articles was used to evaluate the Summarization + NER performance. The whole process takes more than 6 hours to complete on a GPU, and the team executed different steps separately, therefore a full-end-to-end test run on 3986 test articles does not exist in this repo. It can be created and provided if needed. The following files show the code that needed to be run in order to do this:
 
-* Summarization: File `components\summarizer\summarize_test_data.py` contains the code used to generate summaries for 3986 test articles. The output of the summarization is stored in a pickle file, which is then manually extracted into NER component of the pipeline.
-* NER: NERPipline reads in the pickle file outputted from summarization and runs NER. Outputs text file in the form: 
+* Summarization: File `components\summarizer\convert_test_data.py` converts the test data into binary format readable by the TensorFlow implementation, after which file `components\summarizer\summarize_test_data.py` is executed to run the code used to generate summaries for 3986 test articles. The output of the summarization is stored in a pickle file, which is then manually extracted into NER component of the pipeline.
+* NER: `components\ner\NERPipline.py` reads in the pickle file output from summarization and runs NER model implemented in Theano. Outputs text file in the form:
 ```
 aspect sentence
 aspect term
 N/A
 ```
 *Where aspect sentence has the aspect term replaced with 'aspect_term' and N/A is placeholder for positive negative classification (sed for training).*
-* F1 score generation: TODO mention files and explanations
+* Measuring NER accuracy on different outputs: TODO mention files and explanations
 
