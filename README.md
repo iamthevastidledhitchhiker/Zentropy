@@ -16,7 +16,7 @@ Based on article: *[Get To The Point: Summarization with Pointer-Generator Netwo
 
 Detects named entities from summarizations using [tagger model](https://github.com/glample/tagger) with pretrained English model. Only outputs organisation tags.
 
-Based on article: *[Add article name]()*
+Based on article: [Neural Architectures for Named Entity Analysis](https://arxiv.org/abs/1603.01360)
 
 *Requirements:* Python2.7, NLTK (Python2.7), Theano (Python2.7), Python 3.X
 
@@ -58,6 +58,12 @@ To install and run Summarization + Named Entity Recognition you need to do the f
 Testing data of 3986 news articles was used to evaluate the Summarization + NER performance. The whole process takes more than 6 hours to complete on a GPU, and the team executed different steps separately, therefore a full-end-to-end test run on 3986 test articles does not exist in this repo. It can be created and provided if needed. The following files show the code that needed to be run in order to do this:
 
 * Summarization: File `components\summarizer\summarize_test_data.py` contains the code used to generate summaries for 3986 test articles. The output of the summarization is stored in a pickle file, which is then manually extracted into NER component of the pipeline.
-* NER: TODO mention files and explanations
+* NER: NERPipline reads in the pickle file outputted from summarization and runs NER. Outputs text file in the form: 
+```
+aspect sentence
+aspect term
+N/A
+```
+*Where aspect sentence has the aspect term replaced with 'aspect_term' and N/A is placeholder for positive negative classification (sed for training).*
 * F1 score generation: TODO mention files and explanations
 
