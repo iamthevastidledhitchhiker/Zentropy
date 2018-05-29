@@ -2,10 +2,12 @@
 
 A Tensorflow implementation for ["Interactive Attention Networks for Aspect-Level Sentiment Classification"](http://static.ijcai.org/proceedings-2017/0568.pdf) (Dehong Ma, IJCAI 2017)
 
+[Original repository](https://github.com/lpq29743/IAN)
+
 ## Quick Start
 
 - use `pip install -r requirements.txt` to install required packages
-- Create three empty folders: 'analysis' for saving analyzing results, 'logs' for saving experiment logs and 'models' for saving experiment models 
+- Create three empty folders: 'analysis' for saving analyzing results, 'logs' for saving experiment logs and 'models' for saving experiment models
 - Download the 300-dimensional pre-trained word vectors from [Glove](https://nlp.stanford.edu/projects/glove/) and save it in the 'data' folder as 'data/glove.6B.300d.txt'
 
 ## Source Code Tree
