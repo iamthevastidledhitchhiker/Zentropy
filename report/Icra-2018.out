@@ -1,0 +1,11 @@
+\BOOKMARK [1][-]{section.1}{Problem Definition}{}% 1
+\BOOKMARK [1][-]{section.2}{Our Approach}{}% 2
+\BOOKMARK [1][-]{section.3}{Models}{}% 3
+\BOOKMARK [2][-]{subsection.3.1}{Summarization}{section.3}% 4
+\BOOKMARK [3][-]{subsubsection.3.1.1}{Training and Results}{subsection.3.1}% 5
+\BOOKMARK [2][-]{subsection.3.2}{Named Entity Recognition}{section.3}% 6
+\BOOKMARK [2][-]{subsection.3.3}{Aspect-Level Sentiment Classification}{section.3}% 7
+\BOOKMARK [3][-]{subsubsection.3.3.1}{Attention}{subsection.3.3}% 8
+\BOOKMARK [3][-]{subsubsection.3.3.2}{Support Vector Machines}{subsection.3.3}% 9
+\BOOKMARK [2][-]{subsection.3.4}{Results}{section.3}% 10
+\BOOKMARK [1][-]{section.4}{Conclusions}{}% 11

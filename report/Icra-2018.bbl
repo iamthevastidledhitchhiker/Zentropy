@@ -1,0 +1,22 @@
+\begin{thebibliography}{1}
+
+\bibitem{Lample2016}
+Guillaume Lample, Miguel Ballesteros, Sandeep Subramanian, Kazuya Kawakami, and
+  Chris Dyer.
+\newblock Neural architectures for named entity recognition, 2016.
+
+\bibitem{Ma2017}
+Dehong Ma, Sujian Li, Xiaodong Zhang, and Houfeng Wang.
+\newblock Interactive attention networks for aspect-level sentiment
+  classification, 2017.
+
+\bibitem{See2017}
+Abigail See, Peter~J. Liu, and Christopher~D. Manning.
+\newblock Get to the point: Summarization with pointer-generator networks,
+  2017.
+
+\bibitem{Tang2016}
+Duyu Tang, Bing Qin, and Ting Liu.
+\newblock Aspect level sentiment classification with deep memory network, 2016.
+
+\end{thebibliography}
