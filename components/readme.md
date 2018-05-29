@@ -2,9 +2,14 @@
 
 ## aspect-sentiment
 
-Separated into two main components: SVM-based and attention-based. The SVM version can utilize two types of models: support vector classification, and a support vector regression, both using linear kernels.
+Separated into two main components: SVM-based and attention-based. The SVM version can utilize two types of models: support vector classification, and a support vector regression, both using linear kernels. Pre-trained models have been included.
+
+`SVC_SVR_Sentiment.ipynb` contains all of the instructions necessary to classify new sentences.
+
 
 The attention-based analysis has been included for the sake of completeness, however the code itself does not run in a manner that is particularly helpful, as the manner in which the program processes inputs and produces outputs (found in `attention/analysis/`) was difficult to modify without breaking the program itself. Additionally, due to size constraints, the GloVe embeddings must be downloaded separately. This program uses the `glove.6b.300d.txt` file (approximately 1.04 gb)
+
+
 
 ## ner
 
