@@ -24,7 +24,8 @@ Based on article: [Neural Architectures for Named Entity Analysis](https://arxiv
 
 Extracts polarity of organisations from tagger model.
 
-Based on article: *[Add article name]()*
+Based on article: [Interactive Attention Networks for Aspect-Level Sentiment Classification](https://arxiv.org/abs/1709.00893)
+Original article for deep memory networks: [Aspect Level Sentiment Classification with Deep Memory Network](https://arxiv.org/pdf/1605.08900.pdf)
 
 _IN PROGRESS_
 
@@ -66,4 +67,3 @@ N/A
 ```
 *Where aspect sentence has the aspect term replaced with 'aspect_term' and N/A is placeholder for positive negative classification (sed for training).*
 * Measuring NER accuracy on different outputs: TODO mention files and explanations
-
