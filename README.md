@@ -22,13 +22,15 @@ Based on article: [Neural Architectures for Named Entity Analysis](https://arxiv
 
 ## 3. Aspect Based Polarity
 
-Extracts polarity of organisations from tagger model.
+Split into two separate modules - SVM and attention.
+
+The SVM version takes sentences with target entity replaced with `aspect_term` and outputs a polarity prediction for target entity.
+
+The attention version takes 3-sentence outputs from the Named Entity Analysis (see details below) and extracts polarity of organizations. Its outputs can be found in the `components/aspect_sentiment/attention/analysis/`.
 
 Based on article: [Interactive Attention Networks for Aspect-Level Sentiment Classification](https://arxiv.org/abs/1709.00893)
 
 Original article for deep memory networks: [Aspect Level Sentiment Classification with Deep Memory Network](https://arxiv.org/pdf/1605.08900.pdf)
-
-_IN PROGRESS_
 
 *Requirements:* TensorFlow 1.7, Python3.X
 
