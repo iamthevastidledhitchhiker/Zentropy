@@ -154,26 +154,28 @@ We ran tests on a 3986 testing set consisting of tuples  business news articles,
 
 \begin{figure}[H]
   \centering
-  \includegraphics[scale=0.6]{results_01.png}
+  \includegraphics[scale=0.6]{results_summarization.png}
   \caption{Accuracy of salient named entity detection using 3986 business news articles}
   \label{fig:network_performance}
 \end{figure}
 
+The support vector classifier performed better with classifying the original article text and 3-sentence summaries, when comparing the predicted sentiment label with the original, human-classified sentiment label. Because the support vector classifier was trained using full article text, it is not surprising that it does not generalize as well on summaries. Additionally,  the classifier is heavily reliant on vocabulary and the summaries may not use the vocabulary necessary for the classifier to make reliable polarity predictions.
 \begin{figure}[H]
   \centering
-  \includegraphics[scale=0.7]{results_svc.png}
-  \caption{Accuracy of support vector classifier}
+  \includegraphics[scale=0.6]{results_sentiment.png}
+  \caption{Accuracy of support vector classifier across input types}
   \label{fig:network_performance}
 \end{figure}
 
 
+
 \section{\label{Conclusions}Conclusions}
-One issue lies in the fact the NER model is trained to find all named entities in the text, whereas for the data we used and intended applications, we only wanted the main organization(s) extracted from the text. Although the summarization hoped to mitigate this issue, next time performance would most likely been improved by only allowing a single entity output by training with data used to test. 
+One issue lies in the fact the NER model is trained to find all named entities in the text, whereas for the data we used and intended applications, we only wanted the main organization(s) extracted from the text. Although the summarization hoped to mitigate this issue, performance would most likely been improved by only allowing a single entity output during training.
 
 Given more time, patience, and knowledge of the inner workings of TensorFlow, it is likely that we could get the attention-based sentiment classification working properly, which would likely provide a more robust model. While the SVM-based classifier does not produce true aspect-level sentiment classification given the simplicity of its architecture, it performs well enough to function as a working prototype for the time being.
 
 All in all, training each component individually means there is no end-to-end learning, and no way to communicate errors from one model to the next. If one module misses something, the whole chain is affected, and the error is unrecoverable by simple training. Furthermore, by testing the accuracy of the named entity recognition on different types of summaries as well as the full article, we saw consistent results with the current state of the art benchmarks of abstractive neural summarizers, where 3 sentence summaries are still the state of the art baseline.
-
+\\ \\
 
 
 \bibliographystyle{plain}
