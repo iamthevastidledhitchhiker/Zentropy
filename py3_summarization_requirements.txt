@@ -35,7 +35,7 @@ mkl-random==1.0.1
 mosestokenizer==1.0.0
 newspaper3k==0.2.6
 nltk==3.2.2
-numpy==1.14.2
+numpy==1.22.0
 numpydoc==0.8.0
 olefile==0.45.1
 openfile==0.0.6
